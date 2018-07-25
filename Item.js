@@ -42,4 +42,7 @@ exports.create = function(req, res) {
     });
 };
 // Item is the singular name of the collection (items) our model is for
-module.exports = mongoose.model('Item', ItemSchema);
+const Item = mongoose.model('Item', ItemSchema);
+module.exports.Item = Item;
+// module.exports = mongoose.model('Item', ItemSchema);
+
