@@ -9,6 +9,7 @@ let Item = require('./Item');
 const FILE_NAME = 'fulldata.txt';
 const URI = `mongodb://${config.db.host}/${config.db.name}`;
 let db;
+let counter = 0;
 
 function connectDB() {
     mongoose.connect(URI, {useNewUrlParser: true});
@@ -54,80 +55,25 @@ function parseData(data) {
             });
         }
     }
+    return new Promise((resolve, reject) => {
+        resolve('Resolving the promise');
+    });
 }
-
-// function readFile(){
-//     fs.readFile(FILE_NAME, 'utf8', function (err, data) {
-//         parseData(data);
-//     });
-// }
-
-// readFile();
-
-// Create the DB connection
-// db = connectDB();
-// // Error handling
-// db.on('error', console.error.bind(console, 'connection error:'));
-// // Setup what to do when DB connection is opened
-// db.once('open', () => {
-//     // Confirmation that the DB connection has been made
-//     console.log("Connection Successful");
-//     }).then(() => {
-//         fs.readFile(FILE_NAME, 'utf8', function (err, data) {
-//             if (err) {
-//                 throw err;
-//             }
-//             // let a = new Promise((resolve, reject) => {
-//                 parseData(data);
-//             // }).then(console.log("Resolved");
-//         }).then(() => {
-//             if (db) {
-//                 db.close();
-//                 console.log("Closing database connection");
-//             }
-//         }).catch((err) => {
-//             console.log("Error: ", err);
-//         });
-// });
 
 function main() {
     let result;
-    return new Promise((resolve, reject) => {
-        db = connectDB();
-        db.on('error', console.error.bind(console, 'Connection error:'));
-        db.once('open', () => {
-            console.log("Connected to database");
-            try {
-                result = fs.readFile(FILE_NAME, 'utf8', (err, data) => {
-                    parseData(data);
-                });
-                return result;
-                // resolve(result);
-            }
-            catch (err) {
-                reject(err);
-            }
-            finally {
-                if (result) {
-                    db.close();
-                }
-            }
-        })
-        // .then(() => {
-        //     fs.readFile(FILE_NAME, 'utf8', (err, data) => {
-        //         parseData(data);
-        //     });
-            // .then(() => {
-            //     if (db) {
-            //         console.log("Closing database connection");
-            //         return db.close();
-            //     }
-            // })
-            // .catch((err) => {
-            //     console.log("Error: ", err);
-            //     reject(err);
-            // });
-        // });
+    let isDoneWithDB = false;
+    db = connectDB();
+    // db.on('error', console.log('Connection error'));
+    result = fs.readFile(FILE_NAME, 'utf8', (err, data) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            parseData(data).then(()=>{
+                console.log('Updating database');
+            });
+        }
     });
 }
 
