@@ -144,52 +144,37 @@ var itemType = new GraphQLObjectType({
 });
 
 var queryType = new GraphQLObjectType({
-  name: 'Query',
+  name: 'query',
   fields: () => {
     return {
       item: {
         type: new GraphQLList(itemType),
-        resolve: () => {
+        args: {
+          UPC: {
+            type: GraphQLString
+          },
+          InventoryStatus: {
+            type: GraphQLString
+          }, 
+          Size: {
+            type: GraphQLString
+          },
+          ColorName: {
+            type: GraphQLString
+          }
+        },
+        resolve: (root, args) => {
           return new Promise((resolve, reject) => {
-            ITEM.find((err, item) => {
+            ITEM.find(args, (err, items) => {
               if (err) reject(err);
-              else resolve(item);
-            });
+              else resolve(items);
+            })
           });
         }
       }
     }
   }
 });
-
-// var schema = new GraphQLSchema({
-//   query: new GraphQLObjectType({
-//     name: 'RootQueryType',
-//     fields: {
-//       item: {
-//         type: new GraphQLList(itemType),
-//         args: {
-//           UPC: {
-//             name: 'UPC',
-//             type: new GraphQLNonNull(GraphQLString)
-//           }
-//         },
-//         resolve: (root, {UPC}, source, fieldASTs) => {
-//           var projections = getProjection(fieldASTs);
-//           var foundItems = new Promise((resolve, reject) => {
-//               Item.find({itemId}, projections,(err, item) => {
-//                   err ? reject(err) : resolve(item)
-//               })
-//           })
-
-//           return foundItems
-//         }
-//       }
-//     }
-//   })
-// });
-
-// module.exports = schema;
 
 module.exports = new GraphQLSchema({
   query: queryType

@@ -18,10 +18,10 @@ const URI = `mongodb://${config.db.host}/${config.db.name}`;
 
 const app = express();
 
-let query = 'query { UPC }'
-graphql(itemSchema, query).then((result)=>{
-	console.log(JSON.stringify(result, null, " "));
-});
+// let query = 'query { UPC }'
+// graphql(itemSchema, query).then((result)=>{
+// 	console.log(JSON.stringify(result, null, " "));
+// });
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
